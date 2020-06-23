@@ -1,0 +1,58 @@
+version: "3"
+
+services:
+  mc:
+    image: itzg/minecraft-server
+    container_name: mc
+    ports:
+      - "25565:25565"
+    volumes:
+      - "mc:/data"
+    environment:
+      EULA: "TRUE"
+      CONSOLE: "false"
+      ENABLE_RCON: "true"
+      TZ: "America/Toronto"
+      RCON_PASSWORD: "${RCON_PASSWORD}"
+      RCON_PORT: 25575
+    restart: always
+  rcon_web:
+    container_name: rcon_web
+    image: itzg/rcon
+    ports:
+      - "4326:4326"
+      - "4327:4327"
+    volumes:
+      - "rcon_web:/opt/rcon-web-admin/db"
+    environment:
+      RWA_ADMIN: "TRUE"
+      RWA_USERNAME: "${RWA_USERNAME}"
+      RWA_PASSWORD: "${RWA_PASSWORD}"
+      RWA_RCON_HOST: "mc"
+      RWA_RCON_PORT: 25575
+      RWA_RCON_PASSWORD: "${RCON_PASSWORD}"
+  backups:
+    image: itzg/mc-backup
+    environment:
+      BACKUP_INTERVAL: "2h"
+      RCON_HOST: "mc"
+      RCON_PORT: 25575
+      RCON_PASSWORD: "${RCON_PASSWORD}"
+    volumes:
+      - "mc:/data:ro"
+      - "backups:/backups"
+
+volumes:
+  mc:
+    driver: "local"
+    driver_opts:
+      type: "none"
+      device: "${DATA_PATH}"
+      o: "bind"
+  backups:
+    driver: "local"
+    driver_opts:
+      type: "none"
+      device: "${BACKUPS_PATH}"
+      o: "bind"
+  rcon_web:
