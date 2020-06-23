@@ -9,12 +9,43 @@ services:
     volumes:
       - "mc:/data"
     environment:
-      EULA: "TRUE"
       CONSOLE: "false"
       ENABLE_RCON: "true"
-      TZ: "America/Toronto"
+
+      EULA: "${EULA}"
+      TZ: "${TZ}"
       RCON_PASSWORD: "${RCON_PASSWORD}"
-      RCON_PORT: 25575
+      RCON_PORT: "${RCON_PORT}"
+      VERSION: "${VERSION}"
+      MEMORY: "${MEMORY}"
+      OVERRIDE_SERVER_PROPERTIES: "${OVERRIDE_SERVER_PROPERTIES}"
+      MOTD: "${MOTD}"
+      LEVEL: "${LEVEL}"
+      LEVEL_TYPE: "${LEVEL_TYPE}"
+      ALLOW_FLIGHT: "${ALLOW_FLIGHT}"
+      ONLINE_MODE: "${ONLINE_MODE}"
+      MODE: "${MODE}"
+      VIEW_DISTANCE: "${VIEW_DISTANCE}"
+      SPAWN_PROTECTION: "${SPAWN_PROTECTION}"
+      SPAWN_NPCS: "${SPAWN_NPCS}"
+      SPAWN_MONSTERS: "${SPAWN_MONSTERS}"
+      SPAWN_ANIMALS: "${SPAWN_ANIMALS}"
+      MAX_TICK_TIME: "${MAX_TICK_TIME}"
+      MAX_BUILD_HEIGHT: "${MAX_BUILD_HEIGHT}"
+      SNOOPER_ENABLED: "${SNOOPER_ENABLED}"
+      HARDCORE: "${HARDCORE}"
+      GENERATE_STRUCTURES: "${GENERATE_STRUCTURES}"
+      FORCE_GAMEMODE: "${FORCE_GAMEMODE}"
+      ENABLE_COMMAND_BLOCK: "${ENABLE_COMMAND_BLOCK}"
+      ANNOUNCE_PLAYER_ACHIEVEMENTS: "${ANNOUNCE_PLAYER_ACHIEVEMENTS}"
+      ALLOW_NETHER: "${ALLOW_NETHER}"
+      MAX_WORLD_SIZE: "${MAX_WORLD_SIZE}"
+      MAX_PLAYERS: "${MAX_PLAYERS}"
+      ICON: "${ICON}"
+      DIFFICULTY: "${DIFFICULTY}"
+      # OPS=
+      # WHITELIST=
+
     restart: always
   rcon_web:
     container_name: rcon_web
@@ -26,18 +57,28 @@ services:
       - "rcon_web:/opt/rcon-web-admin/db"
     environment:
       RWA_ADMIN: "TRUE"
+      RWA_RCON_HOST: "mc"
+      RWA_RCON_PORT: "${RCON_PORT}"
+      RWA_RCON_PASSWORD: "${RCON_PASSWORD}"
+
       RWA_USERNAME: "${RWA_USERNAME}"
       RWA_PASSWORD: "${RWA_PASSWORD}"
-      RWA_RCON_HOST: "mc"
-      RWA_RCON_PORT: 25575
-      RWA_RCON_PASSWORD: "${RCON_PASSWORD}"
+
   backups:
     image: itzg/mc-backup
     environment:
       BACKUP_INTERVAL: "2h"
       RCON_HOST: "mc"
-      RCON_PORT: 25575
+      BACKUP_NAME: "${LEVEL}"
+      RCON_PORT: "${RCON_PORT}"
       RCON_PASSWORD: "${RCON_PASSWORD}"
+
+      DATA_PATH: "${DATA_PATH}"
+      BACKUPS_PATH: "${BACKUPS_PATH}"
+      BACKUP_INTERVAL: "${BACKUP_INTERVAL}"
+      INITIAL_DELAY: "${INITIAL_DELAY}"
+      PRUNE_BACKUPS_DAYS: "${PRUNE_BACKUPS_DAYS}"
+
     volumes:
       - "mc:/data:ro"
       - "backups:/backups"
